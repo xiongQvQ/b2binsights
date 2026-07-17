@@ -1,0 +1,6 @@
+name = "b2binsights-api"
+main = "src/index.ts"
+compatibility_date = "2025-07-17"
+
+[observability]
+enabled = true

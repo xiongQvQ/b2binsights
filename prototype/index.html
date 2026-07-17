@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2Binsights — 帮外贸人找客户，不是卖软件的</title>
+<style>
+/* ===== Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+
+/* ===== Nav ===== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  mix-blend-mode: difference;
+}
+.nav-logo { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+.nav-cta {
+  background: #f59e0b; color: #0a0a0a; border: none;
+  padding: 10px 22px; border-radius: 6px; font-size: 14px;
+  font-weight: 600; cursor: pointer; transition: background 0.2s;
+}
+.nav-cta:hover { background: #fbbf24; }
+
+/* ===== Hero ===== */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  background: #0d1117; color: #fff;
+  padding: 120px 0 100px;
+  position: relative;
+}
+.hero-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 32px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.hero h1 {
+  font-size: clamp(38px, 5vw, 58px); font-weight: 800;
+  line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 28px;
+}
+.hero h1 mark {
+  background: none; color: #f59e0b;
+}
+.hero p {
+  font-size: 18px; color: rgba(255,255,255,0.65); line-height: 1.8;
+  max-width: 440px; margin-bottom: 40px;
+}
+.hero-trust {
+  display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px;
+}
+.hero-trust span {
+  font-size: 14px; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 10px;
+}
+.hero-trust span::before { content: ''; width: 4px; height: 4px; background: #10b981; border-radius: 50%; flex-shrink: 0; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 14px 30px; border-radius: 6px; font-size: 15px;
+  font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+}
+.btn-primary { background: #f59e0b; color: #0d1117; }
+.btn-primary:hover { background: #fbbf24; }
+.btn-ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+
+.hero-right {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 4px; padding: 24px; font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 12px; line-height: 1.9; color: rgba(255,255,255,0.7);
+}
+.hero-right .prompt { color: #10b981; }
+.hero-right .result { color: rgba(255,255,255,0.5); }
+.hero-right .highlight { color: #f59e0b; }
+.hero-right .dim { color: rgba(255,255,255,0.3); }
+
+/* ===== Shared ===== */
+.section { padding: 100px 32px; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+
+/* ===== Problem (not "pain points") ===== */
+.problem { background: #fff; }
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+.problem-left h2 {
+  font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; line-height: 1.3;
+  margin-bottom: 24px; letter-spacing: -0.02em;
+}
+.problem-left .sub {
+  font-size: 16px; color: #666; line-height: 1.8; max-width: 400px;
+}
+.problem-right { display: flex; flex-direction: column; gap: 28px; }
+.problem-item { border-left: 2px solid #e5e5e5; padding-left: 20px; transition: border-color 0.3s; }
+.problem-item:hover { border-left-color: #f59e0b; }
+.problem-item .num { font-size: 12px; color: #ccc; font-weight: 600; margin-bottom: 6px; }
+.problem-item h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #1a1a1a; }
+.problem-item p { font-size: 14px; color: #888; line-height: 1.7; }
+
+/* ===== Demo (show the product) ===== */
+.demo { background: #f5f5f5; }
+.demo h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+.demo .sub { font-size: 16px; color: #666; margin-bottom: 48px; }
+.demo-table-wrap {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;
+}
+.demo-toolbar {
+  display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+  background: #f0f0f0; border-bottom: 1px solid #e0e0e0;
+}
+.demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+.demo-dot:nth-child(1){background:#ff5f57}.demo-dot:nth-child(2){background:#febc2e}.demo-dot:nth-child(3){background:#28c840}
+.demo-toolbar span { font-size: 12px; color: #999; margin-left: 6px; }
+.demo-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.demo-table th {
+  padding: 11px 14px; text-align: left; font-size: 11px; font-weight: 600;
+  color: #999; text-transform: uppercase; letter-spacing: 0.04em;
+  background: #fafafa; border-bottom: 1px solid #e0e0e0;
+}
+.demo-table td { padding: 11px 14px; border-bottom: 1px solid #f0f0f0; color: #444; }
+.demo-table tr:last-child td { border-bottom: none; }
+.demo-table .company { font-weight: 600; color: #1a1a1a; }
+.demo-table .link { color: #2563eb; font-size: 12px; }
+.demo-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 3px;
+  font-size: 11px; font-weight: 600;
+}
+.demo-badge.good { background: #ecfdf5; color: #059669; }
+.demo-badge.ok { background: #fffbeb; color: #d97706; }
+.demo-table .source { color: #999; font-size: 12px; }
+
+/* ===== How ===== */
+.how { background: #fff; }
+.how h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; margin-bottom: 48px; letter-spacing: -0.02em; }
+.how-steps { display: flex; flex-direction: column; gap: 32px; }
+.how-step {
+  display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: start;
+}
+.how-step-num {
+  width: 56px; height: 56px; border: 2px solid #0d1117; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 800; color: #0d1117; flex-shrink: 0;
+}
+.how-step h4 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.how-step p { font-size: 14px; color: #888; max-width: 500px; }
+
+/* ===== Why Local ===== */
+.local { background: #0d1117; color: #fff; }
+.local-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.local-left h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; margin-bottom: 18px; letter-spacing: -0.02em; }
+.local-left > p { color: rgba(255,255,255,0.55); font-size: 16px; margin-bottom: 36px; line-height: 1.8; }
+.local-items { display: flex; flex-direction: column; gap: 20px; }
+.local-item { display: flex; gap: 16px; align-items: flex-start; }
+.local-item .check { color: #10b981; font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.local-item h5 { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.local-item p { font-size: 13px; color: rgba(255,255,255,0.4); }
+.local-right {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 4px; padding: 40px; text-align: center;
+}
+.local-right .big { font-size: 64px; margin-bottom: 16px; }
+.local-right h4 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.local-right p { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 20px; }
+.local-right .tag {
+  display: inline-block; padding: 8px 20px; border: 1px solid rgba(16,185,129,0.25);
+  color: #10b981; font-size: 13px; font-weight: 600; border-radius: 3px;
+}
+
+/* ===== Product ===== */
+.product { background: #fff; }
+.product h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+.product > .section-inner > p { font-size: 16px; color: #666; margin-bottom: 48px; }
+.product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.product-card {
+  border: 1px solid #e0e0e0; border-radius: 4px; padding: 36px;
+  transition: border-color 0.2s;
+}
+.product-card:hover { border-color: #bbb; }
+.product-card.featured { border-color: #f59e0b; border-width: 2px; }
+.product-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.product-card h3 small { font-size: 13px; color: #999; font-weight: 400; margin-left: 6px; }
+.product-card > p { font-size: 13px; color: #999; margin-bottom: 24px; }
+.product-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.product-list li { font-size: 14px; color: #555; padding-left: 18px; position: relative; line-height: 1.6; }
+.product-list li::before { content: '–'; position: absolute; left: 0; color: #ccc; }
+.product-list li.highlight { color: #f59e0b; font-weight: 600; }
+.product-list li.highlight::before { color: #f59e0b; }
+.product-card .price-row { margin-top: 24px; padding-top: 20px; border-top: 1px solid #eee; display: flex; align-items: baseline; gap: 6px; }
+.product-card .price { font-size: 26px; font-weight: 800; }
+.product-card .price-unit { font-size: 13px; color: #999; }
+.product-card .btn { margin-top: 16px; width: 100%; justify-content: center; }
+.product-card .btn-outline { background: #fff; color: #1a1a1a; border: 1px solid #d0d0d0; }
+.product-card .btn-outline:hover { border-color: #999; }
+
+/* ===== Scenarios ===== */
+.scenarios { background: #f5f5f5; }
+.scenarios h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+.scenarios > .section-inner > p { font-size: 16px; color: #666; margin-bottom: 48px; }
+.scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.scenario-card {
+  background: #fff; border: 1px solid #e8e8e8; border-radius: 4px; padding: 28px;
+  transition: border-color 0.2s;
+}
+.scenario-card:hover { border-color: #ccc; }
+.scenario-card .icon { font-size: 32px; margin-bottom: 12px; }
+.scenario-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.scenario-card p { font-size: 13px; color: #888; line-height: 1.7; }
+
+/* ===== Compare ===== */
+.compare { background: #fff; }
+.compare h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+.compare > .section-inner > p { font-size: 16px; color: #666; margin-bottom: 40px; }
+.compare-table-wrap { overflow-x: auto; }
+.compare-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 680px; }
+.compare-table th {
+  padding: 12px 16px; text-align: left; font-weight: 600; color: #999; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 2px solid #e0e0e0;
+}
+.compare-table td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; color: #555; }
+.compare-table td:first-child { font-weight: 600; color: #1a1a1a; }
+.compare-table .us { background: rgba(245,158,11,0.03); }
+.compare-table .us td { color: #1a1a1a; }
+.compare-table .us th { color: #f59e0b; }
+.compare-yes { color: #10b981; font-weight: 700; }
+.compare-no { color: #ef4444; }
+.compare-mid { color: #d97706; }
+
+/* ===== FAQ ===== */
+.faq { background: #f5f5f5; }
+.faq h2 { font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; margin-bottom: 40px; letter-spacing: -0.02em; }
+.faq-list { max-width: 660px; display: flex; flex-direction: column; gap: 2px; }
+.faq-item { border-bottom: 1px solid #e0e0e0; }
+.faq-item:first-child { border-top: 1px solid #e0e0e0; }
+.faq-q {
+  padding: 18px 0; font-size: 15px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; user-select: none;
+}
+.faq-q::after { content: '+'; font-size: 18px; color: #999; transition: transform 0.2s; }
+.faq-item.open .faq-q::after { content: '−'; }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; font-size: 14px; color: #888; line-height: 1.8; }
+.faq-item.open .faq-a { max-height: 200px; padding-bottom: 16px; }
+
+/* ===== CTA ===== */
+.cta { background: #0d1117; color: #fff; text-align: center; padding: 100px 32px; }
+.cta h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+.cta p { font-size: 17px; color: rgba(255,255,255,0.55); margin-bottom: 36px; line-height: 1.8; }
+.cta .btn { font-size: 16px; padding: 16px 40px; }
+.cta .wechat { margin-top: 24px; font-size: 14px; color: rgba(255,255,255,0.35); }
+
+/* ===== Footer ===== */
+.footer { background: #0d1117; border-top: 1px solid rgba(255,255,255,0.06); padding: 32px; text-align: center; font-size: 13px; color: rgba(255,255,255,0.25); }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-right { display: none; }
+  .problem-grid { grid-template-columns: 1fr; gap: 32px; }
+  .local-grid { grid-template-columns: 1fr; gap: 40px; }
+  .product-grid { grid-template-columns: 1fr; }
+  .scenario-grid { grid-template-columns: 1fr; }
+  .how-step { grid-template-columns: 56px 1fr; gap: 16px; }
+  .section { padding: 64px 20px; }
+  .nav { padding: 12px 20px; }
+}
+
+/* ===== Scroll reveal ===== */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s; }
+.reveal.on { opacity: 1; transform: translateY(0); }
+
+/* ===== MISC ===== */
+.text-link { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+.text-link:hover { color: #1d4ed8; }
+hr { border: none; border-top: 1px solid #e0e0e0; margin: 0; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#" class="nav-logo">B2Binsights</a>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">加微信聊聊</button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1 style="margin-bottom:16px;">帮<mark>外贸人</mark>找客户</h1>
+      <p>告诉我们你要找什么样的客户，我们给你一份能直接打电话、写邮件的联系名单。部署在你自己的电脑上，客户数据不出门。</p>
+      <div class="hero-trust">
+        <span>数据留在你自己电脑里</span>
+        <span>每条线索附带证据来源</span>
+        <span>按你的行业和客户画像定制</span>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">免费拿一份线索样本</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">先看看交付物长什么样 ↓</button>
+      </div>
+    </div>
+    <div class="hero-right">
+      <span class="dim">$ </span><span class="prompt">描述你的目标客户</span><br>
+      <span class="dim">></span> 消费电子进口商和分销商<br>
+      <span class="dim">></span> 目标国家：英国、德国、法国、北欧<br>
+      <span class="dim">></span> 决策人：采购总监、采购负责人<br>
+      <span class="dim">></span> 排除：一件代发、纯平台卖家<br>
+      <span class="dim">$ </span><span class="result">搜索中...</span><br>
+      <span class="dim">$ </span><span class="result">已找到 <span class="highlight">47 家公司</span>，正在验证</span><br>
+      <span class="dim">$ </span><span class="result">正在提取决策人联系方式...</span><br>
+      <span class="dim">$ </span><span class="highlight">线索报告.csv</span><span class="result"> 已生成 ✓</span><br>
+      <span class="dim">$ </span>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="section problem">
+  <div class="section-inner problem-grid">
+    <div class="problem-left reveal">
+      <h2>还在手工搜客户？<br>你不是一个人。</h2>
+      <p class="sub">干外贸的，谁没在 Google 上翻过几十页结果，最后发现能用的没几个。</p>
+    </div>
+    <div class="problem-right reveal">
+      <div class="problem-item"><div class="num">01</div><h4>Google 搜半天，找到的公司要么没官网，要么不是真买家。</h4><p>个人卖家、皮包公司、关停的网站——你花的时间大部分都浪费在筛垃圾上。</p></div>
+      <div class="problem-item"><div class="num">02</div><h4>买来的所谓「精准名单」，电话打过去全是前台。</h4><p>名录商会告诉你他们有采购总监的联系方式——但那个人可能三年前就离职了。</p></div>
+      <div class="problem-item"><div class="num">03</div><h4>最懂获客的那个人离职了，方法也跟着走了。</h4><p>每个公司都有一个特别会找客户的业务员。但他怎么找的？没人问过，也没人记下来。</p></div>
+      <div class="problem-item"><div class="num">04</div><h4>B2B 平台年费越来越贵，询盘质量越来越差。</h4><p>不是平台不好，是上面的人太多了。你花几万块买会员，换来一堆比价的。</p></div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- Demo (what you get — put it early, it's the most convincing) -->
+<section class="section demo" id="demo">
+  <div class="section-inner">
+    <h2 class="reveal">你拿到的不是一张名单，<br>是一份能打电话的客户档案。</h2>
+    <p class="sub reveal">每条线索都有公司名、官网、决策人姓名职位、邮箱、LinkedIn、证据来源——以及我们给的评分。</p>
+    <div class="demo-table-wrap reveal">
+      <div class="demo-toolbar">
+        <div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div>
+        <span>leads_report.csv</span>
+      </div>
+      <div style="overflow-x:auto;">
+      <table class="demo-table">
+        <thead>
+          <tr><th>公司名</th><th>官网</th><th>决策人</th><th>职位</th><th>邮箱</th><th>评分</th><th>证据</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="company">TechTronics Ltd</td><td class="link">techtronics.co.uk</td>
+            <td>James Davidson</td><td>Procurement Director</td><td class="link">j.davidson@...</td>
+            <td><span class="demo-badge good">9.2</span></td><td class="source">3个来源</td>
+          </tr>
+          <tr>
+            <td class="company">HomeDecor GmbH</td><td class="link">homedecor.de</td>
+            <td>Maria Keller</td><td>VP Sourcing</td><td class="link">m.keller@...</td>
+            <td><span class="demo-badge good">8.8</span></td><td class="source">2个来源</td>
+          </tr>
+          <tr>
+            <td class="company">Nordic Electronics</td><td class="link">nordicelec.se</td>
+            <td>Erik Lindholm</td><td>Head of Buying</td><td class="link">e.lindholm@...</td>
+            <td><span class="demo-badge good">9.1</span></td><td class="source">3个来源</td>
+          </tr>
+          <tr>
+            <td class="company">IndusParts France</td><td class="link">indusparts.fr</td>
+            <td>Thomas Schmitt</td><td>CEO</td><td class="link">t.schmitt@...</td>
+            <td><span class="demo-badge ok">8.5</span></td><td class="source">2个来源</td>
+          </tr>
+          <tr>
+            <td class="company">Mediterraneo Import</td><td class="link">medimport.it</td>
+            <td>Chiara Rossi</td><td>Purchasing Manager</td><td class="link">c.rossi@...</td>
+            <td><span class="demo-badge ok">7.9</span></td><td class="source">2个来源</td>
+          </tr>
+          <tr>
+            <td class="company">Oslo Consumer AS</td><td class="link">osloconsumer.no</td>
+            <td>Anders Vik</td><td>Category Manager</td><td class="link">a.vik@...</td>
+            <td><span class="demo-badge good">8.6</span></td><td class="source">2个来源</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How -->
+<section class="section how">
+  <div class="section-inner">
+    <h2 class="reveal">怎么做？三步。</h2>
+    <div class="how-steps">
+      <div class="how-step reveal">
+        <div class="how-step-num">1</div>
+        <div>
+          <h4>你告诉我，你想找什么样的客户。</h4>
+          <p>跟交代业务员一样——什么行业、哪几个国家、要找采购经理还是老板、有没有要排除的。三句话的事。</p>
+        </div>
+      </div>
+      <div class="how-step reveal">
+        <div class="how-step-num">2</div>
+        <div>
+          <h4>AI 去搜、去验证，不用你盯着。</h4>
+          <p>自动在 Google、LinkedIn、B2B 平台、公司官网搜索匹配的公司，交叉核验真实性，深挖关键决策人的联系方式。搜完标记好风险和质量评分。</p>
+        </div>
+      </div>
+      <div class="how-step reveal">
+        <div class="how-step-num">3</div>
+        <div>
+          <h4>你收到一份 CSV 报告，拿来就能用。</h4>
+          <p>里面是公司信息、决策人姓名职位邮箱 LinkedIn、证据来源链接、评分。导入 CRM 也行，打印出来打电话也行。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Local -->
+<section class="section local">
+  <div class="section-inner local-grid">
+    <div class="local-left reveal">
+      <h2>为什么部署在你电脑上很重要？</h2>
+      <p>市面上大多数获客工具都是 SaaS——你的客户名单、搜索记录，全在别人服务器上。我们是本地部署的。你的数据从头到尾不经过我们。</p>
+      <div class="local-items">
+        <div class="local-item"><span class="check">✓</span><div><h5>API Key 是你自己的</h5><p>你用你的 AI 账号，不需要把密钥给我们。</p></div></div>
+        <div class="local-item"><span class="check">✓</span><div><h5>搜索记录直接走你的网络</h5><p>从你的电脑到搜索引擎，不经过任何中间服务器。</p></div></div>
+        <div class="local-item"><span class="check">✓</span><div><h5>挖掘结果存你本地</h5><p>所有客户数据都在你自己的硬盘上，没有「云端同步」这回事。</p></div></div>
+        <div class="local-item"><span class="check">✓</span><div><h5>不需要上传客户名单</h5><p>你想搜什么客户，只有你自己知道。</p></div></div>
+      </div>
+    </div>
+    <div class="local-right reveal">
+      <div class="big">🏠</div>
+      <h4>没有服务器，就没有泄露。</h4>
+      <p>适合对客户数据敏感的外贸团队，也适合有自己获客方法论、不想把客户资源交给平台的团队。</p>
+      <div class="tag">数据 100% 在你手里</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- Product -->
+<section class="section product">
+  <div class="section-inner">
+    <h2 class="reveal">怎么卖？</h2>
+    <p class="reveal">一套核心引擎覆盖大部分需求。如果你的场景比较特殊，可以加模块。</p>
+    <div class="product-grid reveal">
+      <div class="product-card featured">
+        <h3>核心引擎</h3>
+        <p>覆盖外贸获客的全流程</p>
+        <ul class="product-list">
+          <li>客户画像配置（行业 / 国家 / 角色 / 排除条件）</li>
+          <li>多渠道线索挖掘（Google / LinkedIn / B2B 平台 / 官网）</li>
+          <li>决策人深挖（姓名 / 职位 / 邮箱 / LinkedIn 主页）</li>
+          <li>线索评分 + 风险标签 + 证据来源</li>
+          <li>CSV 报告导出</li>
+          <li>帮你部署好 + 陪你跑通第一次</li>
+        </ul>
+        <div class="price-row"><span class="price">咨询报价</span><span class="price-unit">· 一次性收费</span></div>
+        <button class="btn btn-primary" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">问问多少钱 →</button>
+      </div>
+      <div class="product-card">
+        <h3>可加模块 <small>按需选购</small></h3>
+        <p>核心引擎以外的特殊需求</p>
+        <ul class="product-list">
+          <li>竞品渠道分析</li>
+          <li>展会名单结构化清洗</li>
+          <li>供应商背调</li>
+          <li>对接你的 CRM</li>
+          <li>开发信草稿生成</li>
+          <li>飞书 / 企微 / 钉钉入口</li>
+          <li class="highlight">你提需求，我们评估能不能做</li>
+        </ul>
+        <div class="price-row"><span class="price">按需报价</span><span class="price-unit">· 按复杂度评估</span></div>
+        <button class="btn btn-outline" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">聊聊你的需求 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- Scenarios -->
+<section class="section scenarios">
+  <div class="section-inner">
+    <h2 class="reveal">不只能找外贸客户。</h2>
+    <p class="reveal">只要你的生意需要「找到某类公司里的某个人」，就能用。</p>
+    <div class="scenario-grid reveal">
+      <div class="scenario-card"><div class="icon">🌍</div><h4>外贸工厂找海外品牌商 / 进口商</h4><p>按产品品类 + 目标国家 + 客户类型，挖出采购决策人的联系方式。</p></div>
+      <div class="scenario-card"><div class="icon">🎯</div><h4>猎头公司找初创企业做 BD</h4><p>定向挖刚融资的初创公司，找到 CEO / CTO，精准触达潜在客户。</p></div>
+      <div class="scenario-card"><div class="icon">🏭</div><h4>工业品企业找采购方</h4><p>汽车零部件、化工、机械……定向找到潜在采购商和他们的工程/采购负责人。</p></div>
+      <div class="scenario-card"><div class="icon">💼</div><h4>SaaS 公司做出海获客</h4><p>找海外目标行业的潜在客户，定位 IT 决策者，支持英文搜索和本地化信息。</p></div>
+      <div class="scenario-card"><div class="icon">📊</div><h4>投资 / 咨询做行业调研</h4><p>快速摸清一个行业：有哪些公司？谁是关键人物？竞品格局怎么样？</p></div>
+      <div class="scenario-card"><div class="icon">💡</div><h4>你说，我们评估</h4><p>你的行业可能不在上面。没关系，告诉我们你想找谁，我们看看能做不。</p></div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- Compare -->
+<section class="section compare">
+  <div class="section-inner">
+    <h2 class="reveal">跟我们有什么区别？</h2>
+    <p class="reveal">左边是常用的获客方式，右边是 B2Binsights。</p>
+    <div class="compare-table-wrap reveal">
+      <table class="compare-table">
+        <thead><tr><th></th><th>手工搜 Google</th><th>买名单</th><th>B2B 平台会员</th><th class="us">B2Binsights</th></tr></thead>
+        <tbody>
+          <tr><td>决策人联系方式</td><td class="compare-no">✕ 难找</td><td class="compare-no">✕ 不准确</td><td class="compare-mid">△ 有限</td><td class="us compare-yes">✓ 多源交叉验证</td></tr>
+          <tr><td>数据新鲜度</td><td class="compare-mid">△ 看运气</td><td class="compare-no">✕ 买完就过时</td><td class="compare-mid">△ 平台说了算</td><td class="us compare-yes">✓ 实时搜索</td></tr>
+          <tr><td>按你的行业定制</td><td class="compare-no">✕</td><td class="compare-no">✕</td><td class="compare-no">✕</td><td class="us compare-yes">✓ 核心能力</td></tr>
+          <tr><td>客户数据在谁手里</td><td class="compare-yes">✓ 在你手里</td><td class="compare-no">✕ 不知道转了几手</td><td class="compare-no">✕ 平台持有</td><td class="us compare-yes">✓ 在你电脑上</td></tr>
+          <tr><td>结果能不能验证</td><td class="compare-mid">△ 能，但费时间</td><td class="compare-no">✕ 没法验证</td><td class="compare-no">✕ 黑盒</td><td class="us compare-yes">✓ 每条附证据链接</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section faq">
+  <div class="section-inner">
+    <h2 class="reveal">你可能会问</h2>
+    <div class="faq-list reveal">
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">一次能找到多少条线索？</div>
+        <div class="faq-a">一般 30 到 80 条，看你的行业和客户画像。我们不追求数量，每条都有验证、有证据来源、人还在那个职位上。</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">质量怎么保证？</div>
+        <div class="faq-a">每条线索后面都附了证据来源链接——官网页面、LinkedIn 主页、B2B 平台页面等。你可以点开自己验证。我们还给每条线索打分，帮你排跟进优先级。</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">我不懂技术，能用吗？</div>
+        <div class="faq-a">能。我们帮你部署好、配置好，你只需要会用浏览器和 Excel 就行。获客策略的设置就是描述你的目标客户——跟你给业务员交代任务一样。</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">我的客户数据真的安全吗？</div>
+        <div class="faq-a">部署在你电脑上，API Key 是你自己的，搜索记录走你的网络，结果存你本地。你的客户数据从头到尾不经过我们。这不是 SaaS。</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">怎么买？怎么付？</div>
+        <div class="faq-a">联系我们就行。交付格式是 CSV 报告。标准版一次性收费，定制模块按需报价。支持对公转账和微信支付。</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">买完你们还管吗？</div>
+        <div class="faq-a">管。标准版包含部署 + 帮你跑通第一次获客策略，确认拿到线索。后面如果你想加开发信、接 CRM 这些模块，再聊。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <h2>拿不准适不适合你？</h2>
+  <p>加微信，说一下你的行业和目标客户。<br>我们免费帮你跑一批线索样本，你先看质量。</p>
+  <button class="btn btn-primary" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">加微信：b2binsights →</button>
+  <p class="wechat">微信号：b2binsights</p>
+</section>
+
+<footer class="footer">© 2024 B2Binsights · 你的客户数据，永远属于你。</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
