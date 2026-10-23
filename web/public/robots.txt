@@ -1,0 +1,59 @@
+# B2Binsights — 欢迎所有搜索引擎与 AI 引擎抓取
+User-agent: *
+Allow: /
+
+# 搜索引擎
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+
+# OpenAI(GPT/ChatGPT/搜索)
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic(Claude)
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-User
+Allow: /
+User-agent: Claude-SearchBot
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+
+# Google Gemini / AI 概览内容使用
+User-agent: Google-Extended
+Allow: /
+
+# Apple(Apple Intelligence / Spotlight)
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+
+# 字节跳动(豆包)
+User-agent: Bytespider
+Allow: /
+
+# Meta AI
+User-agent: meta-externalagent
+Allow: /
+User-agent: meta-externalfetcher
+Allow: /
+User-agent: meta-webindexer
+Allow: /
+
+# Amazon( Alexa / Nova)
+User-agent: Amazonbot
+Allow: /
+
+Sitemap: https://b2binsights.io/sitemap.xml

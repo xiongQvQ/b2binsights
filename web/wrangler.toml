@@ -1,4 +1,4 @@
-name = "b2binsights-web"
+name = "b2binsights"
 pages_build_output_dir = "dist"
 compatibility_date = "2025-07-17"
 
